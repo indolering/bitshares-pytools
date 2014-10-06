@@ -8,7 +8,6 @@ confirmationTime = timedelta( seconds=10 )
 
 if __name__ == "__main__":
      rpc = btsrpcapi(config.url, config.user, config.passwd)
-     print( rpc.getstatus(  ) )
      status = json.loads(rpc.getstatus())
      blockhead = status[ "result" ][ "blockchain_head_block_num" ]
      block = json.loads(rpc.rpcexec({

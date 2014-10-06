@@ -27,7 +27,6 @@ def checkmissedblocks() :
     print "open"    + rpcLOCAL.walletopen("delegate")
     print "enable"  + rpcLOCAL.enableblockproduction("ALL")
     print "unclock" + rpcLOCAL.unlock(config.backupunlock)
-    print "network" + rpcLOCAL.setnetwork(120,200)
  updatemissedblocks()
 
 def updatemissedblocks() :
