@@ -136,33 +136,29 @@ def fetch_from_poloniex():
    if config["poloniex_trust_level"] > 0.8:
     sys.exit("Exiting due to exchange importance!")
    return
+  for coin in availableAssets :
+   if float(result["BTC_"+coin.upper()]["last"])>config["minValidAssetPrice"]:
+    price_in_btc[ coin ].append(float(result["BTC_"+coin.upper()]["last"]))
+    volume_in_btc[ coin ].append(float(result["BTC_"+coin.upper()]["baseVolume"])*config["poloniex_trust_level"])
 
-
-   for coin in availableAssets :
-    if float(result["BTC_"+coin.upper()]["last"])>config["minValidAssetPrice"]:
-     price_in_btc[ coin ].append(float(result["BTC_"+coin.upper()]["last"]))
-     volume_in_btc[ coin ].append(float(result["BTC_"+coin.upper()]["baseVolume"])*config["poloniex_trust_level"])
-
-
-def fetch_from_bitrex():
+def fetch_from_bittrex():
   availableAssets = [ "BTSX", "LTC", "BTSX", "PTS", "PPC" ]
   try:
    url="https://bittrex.com/api/v1.1/public/getmarketsummaries"
    response = requests.get(url=url, headers=headers)
    result = response.json()["result"]
   except:
-   print("Error fetching results from bitrex!")
-   if config["bitrex_trust_level"] > 0.8:
+   print("Error fetching results from bittrex!")
+   if config["bittrex_trust_level"] > 0.8:
     sys.exit("Exiting due to exchange importance!")
    return
-
-   for coin in result :
-    if( coin[ "MarketName" ] in ["BTC-"+a for a in availableAssets] ) :
-     mObj    = re.match( 'BTC-(.*)', coin[ "MarketName" ] )
-     altcoin = mObj.group(1)
-     if float(coin["Last"]) > config["minValidAssetPrice"]:
-      price_in_btc[ altcoin ].append(float(coin["Last"]))
-      volume_in_btc[ altcoin ].append(float(coin["Volume"])*float(coin["Last"])*config["bitrex_trust_level"])
+  for coin in result :
+   if( coin[ "MarketName" ] in ["BTC-"+a for a in availableAssets] ) :
+    mObj    = re.match( 'BTC-(.*)', coin[ "MarketName" ] )
+    altcoin = mObj.group(1)
+    if float(coin["Last"]) > config["minValidAssetPrice"]:
+     price_in_btc[ altcoin ].append(float(coin["Last"]))
+     volume_in_btc[ altcoin ].append(float(coin["Volume"])*float(coin["Last"])*config["bittrex_trust_level"])
 
 def fetch_from_yahoo():
   try :
@@ -417,7 +413,7 @@ if __name__ == "__main__":
  print(", Poloniex", end="",flush=True)
  fetch_from_poloniex()
  print(", bittrex", end="",flush=True)
- fetch_from_bitrex()
+ fetch_from_bittrex()
  print(" -- done. Calculating btsx feeds prices and checking publish rules.")
 
  ## Determine btsx price ######################################################
