@@ -191,13 +191,13 @@ def fetch_from_yahoo():
    sys.exit("Warning: unknown error - yahoo")
 
 ## ----------------------------------------------------------------------------
-## GLD=XAU  SLV=XAG
+## GOLD=XAU  SILVER=XAG
 ## ----------------------------------------------------------------------------
 def bitassetname(asset) :
  if asset == "XAU" : 
-  return "GLD"
+  return "GOLD"
  elif asset == "XAG" : 
-  return "SLV"
+  return "SILVER"
  else :
   return asset
 
@@ -352,7 +352,7 @@ if __name__ == "__main__":
             'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0'}
  auth    = (config["bts_rpc"]["username"], config["bts_rpc"]["password"])
  url     = config["bts_rpc"]["url"]
- asset_list_all = ["PTS", "PPC", "LTC", "BTC", "SLV", "GLD", "TRY", "SGD", "HKD", "RUB", "SEK", "NZD", "CNY", "MXN", "CAD", "CHF", "AUD", "GBP", "JPY", "EUR", "USD"] #  "WTI" missing as incompatible
+ asset_list_all = ["PTS", "PPC", "LTC", "BTC", "SILVER", "GOLD", "TRY", "SGD", "HKD", "RUB", "SEK", "NZD", "CNY", "MXN", "CAD", "CHF", "AUD", "GBP", "JPY", "EUR", "USD"] #  "WTI" missing as incompatible
  delegate_list  = config["delegate_list"]
  ## Call Parameters ###########################################################
  if len( sys.argv ) < 2 :
