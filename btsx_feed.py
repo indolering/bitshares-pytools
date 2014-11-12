@@ -57,7 +57,7 @@ def publish_rule():
 ## ----------------------------------------------------------------------------
 def fetch_from_btc38():
   url="http://api.btc38.com/v1/ticker.php"
-  availableAssets = [ "LTC", "BTSX", "PTS" ]
+  availableAssets = [ "BTSX" ]
   try :
    params = { 'c': 'all', 'mk_type': 'btc' }
    response = requests.get(url=url, params=params, headers=headers)
@@ -73,7 +73,7 @@ def fetch_from_btc38():
     price_in_btc[ coin ].append(float(result[coin.lower()]["ticker"]["last"]))
     volume_in_btc[ coin ].append(float(result[coin.lower()]["ticker"]["vol"]*result[coin.lower()]["ticker"]["last"])*config["btc38_trust_level"])
 
-  availableAssets = [ "LTC", "BTSX", "BTC", "PPC", "PTS" ]
+  availableAssets = [ "BTSX", "BTC" ]
   try :
    params = { 'c': 'all', 'mk_type': 'cny' }
    response = requests.get(url=url, params=params, headers=headers)
@@ -101,7 +101,7 @@ def fetch_from_bter():
     sys.exit("Exiting due to exchange importance")
    return
 
-  availableAssets = [ "LTC", "BTSX", "PTS", "PPC" ]
+  availableAssets = [ "BTSX" ]
   for coin in availableAssets :
    if float(result[coin.lower()+"_btc"]["last"]) < config["minValidAssetPrice"]:
     print("Unreliable results from bter for %s"%(coin))
@@ -109,7 +109,7 @@ def fetch_from_bter():
    price_in_btc[ coin ].append(float(result[coin.lower()+"_btc"]["last"]))
    volume_in_btc[ coin ].append(float(result[coin.lower()+"_btc"]["vol_btc"])*config["bter_trust_level"])
 
-  availableAssets = [ "BTC",  "LTC", "BTSX" ]
+  availableAssets = [ "BTC", "BTSX" ]
   for coin in availableAssets :
    if float(result[coin.lower()+"_usd"]["last"]) < config["minValidAssetPrice"]:
     print("Unreliable results from bter for %s"%(coin))
@@ -117,7 +117,7 @@ def fetch_from_bter():
    price_in_usd[ coin ].append(float(result[coin.lower()+"_usd"]["last"]))
    volume_in_usd[ coin ].append(float(result[coin.lower()+"_usd"]["vol_usd"])*config["bter_trust_level"])
 
-  availableAssets = [ "BTSX", "BTC", "LTC", "BTSX", "PTS", "PPC" ]
+  availableAssets = [ "BTSX", "BTC" ]
   for coin in availableAssets :
    if float(result[coin.lower()+"_cny"]["last"]) < config["minValidAssetPrice"]:
     print("Unreliable results from bter for %s"%(coin))
@@ -130,7 +130,7 @@ def fetch_from_poloniex():
    url="https://poloniex.com/public?command=returnTicker"
    response = requests.get(url=url, headers=headers)
    result = response.json()
-   availableAssets = [ "LTC", "BTSX", "PTS", "PPC" ]
+   availableAssets = [ "BTSX" ]
   except:
    print("Error fetching results from poloniex!")
    if config["poloniex_trust_level"] > 0.8:
@@ -142,7 +142,7 @@ def fetch_from_poloniex():
     volume_in_btc[ coin ].append(float(result["BTC_"+coin.upper()]["baseVolume"])*config["poloniex_trust_level"])
 
 def fetch_from_bittrex():
-  availableAssets = [ "BTSX", "LTC", "BTSX", "PTS", "PPC" ]
+  availableAssets = [ "BTSX" ]
   try:
    url="https://bittrex.com/api/v1.1/public/getmarketsummaries"
    response = requests.get(url=url, headers=headers)
