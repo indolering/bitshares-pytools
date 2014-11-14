@@ -101,7 +101,7 @@ def fetch_from_bter():
     sys.exit("Exiting due to exchange importance")
    return
 
-  availableAssets = [ "BTSX" ]
+  availableAssets = [ "BTS" ]
   for coin in availableAssets :
    if float(result[coin.lower()+"_btc"]["last"]) < config["minValidAssetPrice"]:
     print("Unreliable results from bter for %s"%(coin))
@@ -109,7 +109,7 @@ def fetch_from_bter():
    price_in_btc[ coin ].append(float(result[coin.lower()+"_btc"]["last"]))
    volume_in_btc[ coin ].append(float(result[coin.lower()+"_btc"]["vol_btc"])*config["bter_trust_level"])
 
-  availableAssets = [ "BTC", "BTSX" ]
+  availableAssets = [ "BTC", "BTS" ]
   for coin in availableAssets :
    if float(result[coin.lower()+"_usd"]["last"]) < config["minValidAssetPrice"]:
     print("Unreliable results from bter for %s"%(coin))
@@ -117,7 +117,7 @@ def fetch_from_bter():
    price_in_usd[ coin ].append(float(result[coin.lower()+"_usd"]["last"]))
    volume_in_usd[ coin ].append(float(result[coin.lower()+"_usd"]["vol_usd"])*config["bter_trust_level"])
 
-  availableAssets = [ "BTSX", "BTC" ]
+  availableAssets = [ "BTS", "BTC" ]
   for coin in availableAssets :
    if float(result[coin.lower()+"_cny"]["last"]) < config["minValidAssetPrice"]:
     print("Unreliable results from bter for %s"%(coin))
@@ -384,7 +384,7 @@ if __name__ == "__main__":
  assetprecision["BTSX"]  = 1e5
  oldtime                 = {}
 
- for asset in asset_list_all + ["BTSX"]: 
+ for asset in asset_list_all + ["BTSX", "BTS"]: 
   price_in_btsx[ asset ]         = []
   price_in_eur[ asset ]          = []
   price_in_usd[ asset ]          = []

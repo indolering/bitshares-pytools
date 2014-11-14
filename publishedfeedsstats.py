@@ -52,7 +52,7 @@ if __name__ == "__main__":
  t2.align                   = 'l'                                                                                                                                                                                                    
  t2.border                  = True
  for p in delegatefeeds : 
-  assetstr = "\n".join([ "%s, %11.8f (med%+8.3f%%)" % (a["asset_symbol"], a[ "price" ], 100*(a[ "price" ]-medianPrice[ a[ "asset_symbol" ]])/medianPrice[ a[ "asset_symbol" ]]) for a in p[ "feeds" ] ])
+  assetstr = "\n".join([ "%8s, %11.8f (med%+8.3f%%)" % (a["asset_symbol"], a[ "price" ], 100*(a[ "price" ]-medianPrice[ a[ "asset_symbol" ]])/medianPrice[ a[ "asset_symbol" ]]) for a in p[ "feeds" ] ])
   t2.add_row([p["name"], p["top"], p["numValidFeeds"], assetstr ])
 
  #print(t2.get_string(sortby="numFeeds", reversesort=True))
