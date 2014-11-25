@@ -2,10 +2,10 @@
 url    = "http://10.0.0.16:19988/rpc"
 
 ## User as defined with --rpcuser=test or BitShares config file
-user   = 'xeroc'
+user   = 'username'
 
 ## User as defined with --rpcpassword=test or BitShares config file
-passwd = '3K7WsbRYFExewXdm'
+passwd = 'password'
 
 ## Wallet name ( default: default :) )
 wallet = "default"
@@ -17,7 +17,7 @@ unlock = ""
 delegate = "delegate.xeroc"
 
 ## Delegate which pays for the slate broadcast transaction
-payee    = "xeroc"
+payee    = "payouts.xeroc"
 ## NOTE: the private keys for both, "delegate" and "payee", must be in
 ##       available in the wallet!
 
