@@ -416,6 +416,18 @@ if __name__ == "__main__":
  fetch_from_bittrex()
  print(" -- done. Calculating btsx feeds prices and checking publish rules.")
 
+ ## Temp fix for BTSX=BTS #####################################################
+ price_in_btsx[ "BTSX" ]         = price_in_btsx[ "BTS" ] 
+ price_in_eur[ "BTSX" ]          = price_in_eur[ "BTS" ]  
+ price_in_usd[ "BTSX" ]          = price_in_usd[ "BTS" ]  
+ price_in_btc[ "BTSX" ]          = price_in_btc[ "BTS" ]  
+ price_in_cny[ "BTSX" ]          = price_in_cny[ "BTS" ]  
+ volume_in_eur[ "BTSX" ]         = volume_in_eur[ "BTS" ]                                                                               
+ volume_in_usd[ "BTSX" ]         = volume_in_usd[ "BTS" ]                                                                               
+ volume_in_btc[ "BTSX" ]         = volume_in_btc[ "BTS" ]                                                                               
+ volume_in_cny[ "BTSX" ]         = volume_in_cny[ "BTS" ]                                                                               
+ volume_in_btsx[ "BTSX" ]        = volume_in_btsx[ "BTS" ]
+
  ## Determine btsx price ######################################################
  get_btsxprice()
 
