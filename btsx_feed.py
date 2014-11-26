@@ -57,7 +57,7 @@ def publish_rule():
 ## ----------------------------------------------------------------------------
 def fetch_from_btc38():
   url="http://api.btc38.com/v1/ticker.php"
-  availableAssets = [ "BTSX" ]
+  availableAssets = [ "BTS" ]
   try :
    params = { 'c': 'all', 'mk_type': 'btc' }
    response = requests.get(url=url, params=params, headers=headers)
@@ -73,7 +73,7 @@ def fetch_from_btc38():
     price_in_btc[ coin ].append(float(result[coin.lower()]["ticker"]["last"]))
     volume_in_btc[ coin ].append(float(result[coin.lower()]["ticker"]["vol"]*result[coin.lower()]["ticker"]["last"])*config["btc38_trust_level"])
 
-  availableAssets = [ "BTSX", "BTC" ]
+  availableAssets = [ "BTS", "BTC" ]
   try :
    params = { 'c': 'all', 'mk_type': 'cny' }
    response = requests.get(url=url, params=params, headers=headers)
