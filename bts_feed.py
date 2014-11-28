@@ -338,11 +338,11 @@ def print_stats() :
     p = price_in_bts_weighted[asset]
     ps = price_in_bts[asset]
     bc = price_median_blockchain[asset]
-    print("{0}|new: {1:>7.7f}BTS (e:{2:>7.7f}/{3:>7.7f}) (bc:{4:>7.7f})  ".format(asset, p, statistics.mean(ps), statistics.median(ps), bc)+\
+    print("{0: <8}|new: {1:>7.7f}BTS (e:{2:>7.7f}/{3:>7.7f}) (bc:{4:>7.7f})  ".format(asset, p, statistics.mean(ps), statistics.median(ps), bc)+\
           "|  change: {0:+5.4f}%  ".format((p - myCurrentFeed[asset])*100)+\
-          "|  change (to med.): {0:+7.4f}%  ".format((p - bc)*100)+\
-          "|  exchange (median): {0:+7.4f}%  ".format((statistics.median(ps)-p)/p*100)+\
-          "|  exchange (range): {0:+7.4f}% to {1:+7.4f}%  ".format((num.min(ps)-p)/p*100,(num.max(ps)-p)/p*100 )+\
+          "|  change (chain): {0:+7.4f}%  ".format((p - bc)*100)+\
+          "|  exchange (med): {0:+7.4f}%  ".format((statistics.median(ps)-p)/p*100)+\
+          "|  exchange (rag): {0:+7.4f}% to {1:+7.4f}%  ".format((num.min(ps)-p)/p*100,(num.max(ps)-p)/p*100 )+\
           "|  last update: {0!s} ago".format(str(datetime.utcnow()-oldtime[asset]))  )
 
 ## ----------------------------------------------------------------------------
