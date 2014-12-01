@@ -16,7 +16,7 @@ if __name__ == "__main__":
        "jsonrpc": "2.0",
        "id": 0
        }))
-     nowtime = datetime.strptime(block[ "result" ][ "timestamp" ],"%Y%m%dT%H%M%S")
+     nowtime = datetime.strptime(block[ "result" ][ "timestamp" ],"%Y-%m-%dT%H:%M:%S")
      blockNum = int(sys.argv[ 1 ])
      print("block %d to appear in <= %s" % (blockNum,str(confirmationTime*(blockNum-blockhead))))
      print("UTC time: %s" % str(nowtime+confirmationTime*(blockNum-blockhead)))

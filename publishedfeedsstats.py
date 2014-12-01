@@ -20,7 +20,7 @@ if __name__ == "__main__":
   validfeed = []
   validfeeds = []
   for feed in feeds :
-   feedtime = datetime.strptime(feed["last_update"],"%Y%m%dT%H%M%S")
+   feedtime = datetime.strptime(feed["last_update"],"%Y-%m-%dT%H:%M:%S")
    delta    = (currenttime-feedtime)
    if feed[ "asset_symbol" ] not in feedprice : feedprice[ feed["asset_symbol"] ] = [  ]
    feedprice[ feed["asset_symbol"] ].append(feed[ "price" ])
