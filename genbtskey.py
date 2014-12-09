@@ -101,6 +101,15 @@ def keyToBTSAddress(s) :
     myhash     = ripemd160(myaddress)
     return "BTS" + base58encode(base256decode(myaddress + myhash[ :4 ]))
 
+def btcPubKeyToBTSAddress(btspubkey) :
+    myaddress  = ripemd160(hashlib.sha512(btspubkey.decode( 'hex' )).digest())
+    myhash     = ripemd160(myaddress)
+    return "BTS" + base58encode(base256decode(myaddress + myhash[ :4 ]))
+
+def btcPubkeytoBTSpubkey(btcpubkey) :
+    myhash     = ripemd160(btcpubkey.decode( 'hex' ))
+    return "BTS" + base58encode(base256decode(btcpubkey.decode( 'hex' ) + myhash[ :4 ]))
+
 class Testcases(unittest.TestCase) :
     def test_btspubkey(self):
         self.assertEqual(keyToBTSPubKey(wifKeyToPrivateKey("5HqUkGuo62BfcJU5vNhTXKJRXuUi9QSE6jp8C3uBJ2BVHtB8WSd")),"BTS677ZZd62Ca7SoUJoT1CytBhj4aJewzzi8tQZxYNqpSSK69FTuF")
@@ -149,8 +158,13 @@ if __name__ == '__main__':
             private_key =  wifKeyToPrivateKey(sys.argv[1])
 
     # Output
-    print "Secret Exponent : %s " % private_key 
-    print "Private Key     : %s " % privateKeyToWif(private_key)
-    print "Address         : %s " % keyToBTCAddress(private_key)
-    print "BTS PubKey      : %s " % keyToBTSPubKey(private_key)
-    print "BTS Address     : %s " % keyToBTSAddress(private_key)
+    print "Secret Exponent         : %s " % private_key 
+    print "Private Key             : %s " % privateKeyToWif(private_key)
+    print "BTC Address             : %s " % keyToBTCAddress(private_key)
+    print "-"*80
+    print "BTC Pubkey (compressed) : %s " % compressedpubkey(private_key)
+    print "BTC Address             : %s " % keyToBTCAddress(private_key)
+    print "-"*80
+    print "BTS PubKey              : %s " % keyToBTSPubKey(private_key)
+    print "BTS Address             : %s " % keyToBTSAddress(private_key)
+    print "-"*80
