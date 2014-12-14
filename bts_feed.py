@@ -168,7 +168,7 @@ def fetch_from_bittrex():
 
 def fetch_from_yahoo():
   try :
-   availableAssets = ["XAG", "XAU", "TRY", "SGD", "HKD", "RUB", "SEK", "NZD", "CNY", "MXN", "CAD", "CHF", "AUD", "GBP", "JPY", "EUR", "USD"]
+   availableAssets = ["XAG", "XAU", "TRY", "SGD", "HKD", "RUB", "SEK", "NZD", "CNY", "MXN", "CAD", "CHF", "AUD", "GBP", "JPY", "EUR", "USD", "KRW"]
    ## USD/X
    yahooAssets = ",".join(["USD"+a+"=X" for a in availableAssets])
    url="http://download.finance.yahoo.com/d/quotes.csv"
@@ -281,7 +281,9 @@ def update_feed(assets,payee):
   try:
    response = requests.post(url, data=json.dumps(request), headers=headers, auth=auth)
    result = response.json()
-   print("Update:", delegate, assets, result)
+   print("Update:", delegate, assets)
+   if "error" in result :
+    print(result["error"])
   except:
    print("Cannot connect to delegate!!")
    sys.exit()
@@ -358,7 +360,7 @@ if __name__ == "__main__":
             'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0'}
  auth    = (config["bts_rpc"]["username"], config["bts_rpc"]["password"])
  url     = config["bts_rpc"]["url"]
- asset_list_all = ["BTC", "SILVER", "GOLD", "TRY", "SGD", "HKD", "RUB", "SEK", "NZD", "CNY", "MXN", "CAD", "CHF", "AUD", "GBP", "JPY", "EUR", "USD"] #  "WTI" missing as incompatible
+ asset_list_all = ["BTC", "SILVER", "GOLD", "TRY", "SGD", "HKD", "RUB", "SEK", "NZD", "CNY", "MXN", "CAD", "CHF", "AUD", "GBP", "JPY", "EUR", "USD", "KRW"]
  delegate_list  = config["delegate_list"]
  ## Call Parameters ###########################################################
  if len( sys.argv ) < 2 :
