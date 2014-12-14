@@ -281,7 +281,7 @@ def update_feed(assets,payee):
   try:
    response = requests.post(url, data=json.dumps(request), headers=headers, auth=auth)
    result = response.json()
-   print("Update:", delegate, assets)
+   print("Updating ", delegate)
    if "error" in result :
     print(result["error"])
   except:
