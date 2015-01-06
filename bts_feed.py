@@ -130,7 +130,7 @@ def fetch_from_poloniex():
    url="https://poloniex.com/public?command=returnTicker"
    response = requests.get(url=url, headers=headers)
    result = response.json()
-   availableAssets = [ "BTSX" ]
+   availableAssets = [ "BTS" ]
   except:
    print("Error fetching results from poloniex!")
    if config["poloniex_trust_level"] > 0.8:
@@ -138,11 +138,8 @@ def fetch_from_poloniex():
    return
   for coin in availableAssets :
    if float(result["BTC_"+coin.upper()]["last"])>config["minValidAssetPrice"]:
-    coinmap=coin
-    if coin=="BTSX" : 
-     coinmap="BTS"
-    price_in_btc[ coinmap ].append(float(result["BTC_"+coin.upper()]["last"]))
-    volume_in_btc[ coinmap ].append(float(result["BTC_"+coin.upper()]["baseVolume"])*config["poloniex_trust_level"])
+    price_in_btc[ coin ].append(float(result["BTC_"+coin.upper()]["last"]))
+    volume_in_btc[ coin ].append(float(result["BTC_"+coin.upper()]["baseVolume"])*config["poloniex_trust_level"])
 
 def fetch_from_bittrex():
   availableAssets = [ "BTSX" ]
