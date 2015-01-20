@@ -6,64 +6,59 @@ import os
 import sys
 import unittest
 
-# https://github.com/gferrin/bitcoin-code/blob/master/utils.py
-b58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+# https://github.com/kylegibson/python-bitcoin-client/blob/master/base58.py
+__b58chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+__b58base = len(__b58chars)
 
-def base58encode(n):
+def base58encode(v):
+    long_value = int(v.encode("hex_codec"), 16)
     result = ''
-    while n > 0:
-        result = b58[n%58] + result
-        n /= 58
-    return result
+    while long_value >= __b58base:
+        div, mod = divmod(long_value, __b58base)
+        result = __b58chars[mod] + result
+        long_value = div
+    result = __b58chars[long_value] + result
+    # Bitcoin does a little leading-zero-compression:
+    # leading 0-bytes in the input become leading-1s
+    nPad = 0
+    for c in v:
+        if c == '\0': nPad += 1
+        else: break
+    return (__b58chars[0]*nPad) + result
 
-def base58decode(s):
-    result = 0
-    for i in range(0, len(s)):
-        result = result * 58 + b58.index(s[i])
-    return result
-
-def base256decode(s):
-    result = 0
-    for c in s:
-        result = result * 256 + ord(c)
-    return result
-
-def base256encode(n):
+def base58decode(v):
+    long_value = 0L
+    for (i, c) in enumerate(v[::-1]):
+        long_value += __b58chars.find(c) * (__b58base**i)
     result = ''
-    while n > 0:
-        result = chr(n % 256) + result
-        n /= 256
+    while long_value >= 256:
+        div, mod = divmod(long_value, 256)
+        result = chr(mod) + result
+        long_value = div
+    result = chr(long_value) + result
+    nPad = 0
+    for c in v:
+        if c == __b58chars[0]: nPad += 1
+        else: break
+    result = chr(0)*nPad + result
     return result
-
-def countLeadingChars(s, ch):
-    count = 0
-    for c in s:
-        if c == ch:
-            count += 1
-        else:
-            break
-    return count
 
 # https://en.bitcoin.it/wiki/Base58Check_encoding
 def base58CheckEncode(version, payload):
     s = chr(version) + payload
     checksum = hashlib.sha256(hashlib.sha256(s).digest()).digest()[0:4]
     result = s + checksum
-    leadingZeros = countLeadingChars(result, '\0')
-    return '1' * leadingZeros + base58encode(base256decode(result))
+    return base58encode(result)
 
 def base58CheckDecode(s):
-    leadingOnes = countLeadingChars(s, '1')
-    s = base256encode(base58decode(s))
-    result = '\0' * leadingOnes + s[:-4]
-    chk = s[-4:]
-    checksum = hashlib.sha256(hashlib.sha256(result).digest()).digest()[0:4]
-    assert(chk == checksum)
-    version = result[0]
-    return result[1:]
+    s = base58decode(s)
+    dec = s[:-4]
+    checksum = hashlib.sha256(hashlib.sha256(dec).digest()).digest()[0:4]
+    assert(s[-4:] == checksum)
+    return dec[1:]
 
 def wifKeyToPrivateKey(s) :
-        return base58CheckDecode(s).encode('hex')
+    return base58CheckDecode(s).encode('hex')
 
 def privateKeyToWif(key_hex):    
     return base58CheckEncode(0x80, key_hex.decode('hex'))
@@ -93,22 +88,22 @@ def compressedpubkey(s):
 def keyToBTSPubKey(s):
     btspubkey  = compressedpubkey(s).decode('hex')
     myhash     = ripemd160(btspubkey)
-    return "BTS" + base58encode(base256decode(btspubkey + myhash[ :4 ]))
+    return "BTS" + base58encode(btspubkey + myhash[ :4 ])
 
 def keyToBTSAddress(s) :
     btspubkey  = compressedpubkey(s).decode('hex')
     myaddress  = ripemd160(hashlib.sha512(btspubkey).digest())
     myhash     = ripemd160(myaddress)
-    return "BTS" + base58encode(base256decode(myaddress + myhash[ :4 ]))
+    return "BTS" + base58encode(myaddress + myhash[ :4 ])
 
 def btcPubKeyToBTSAddress(btspubkey) :
     myaddress  = ripemd160(hashlib.sha512(btspubkey.decode( 'hex' )).digest())
     myhash     = ripemd160(myaddress)
-    return "BTS" + base58encode(base256decode(myaddress + myhash[ :4 ]))
+    return "BTS" + base58encode(myaddress + myhash[ :4 ])
 
 def btcPubkeytoBTSpubkey(btcpubkey) :
     myhash     = ripemd160(btcpubkey.decode( 'hex' ))
-    return "BTS" + base58encode(base256decode(btcpubkey.decode( 'hex' ) + myhash[ :4 ]))
+    return "BTS" + base58encode(btcpubkey.decode( 'hex' ) + myhash[ :4 ])
 
 class Testcases(unittest.TestCase) :
     def test_btspubkey(self):
@@ -124,6 +119,8 @@ class Testcases(unittest.TestCase) :
         self.assertEqual(keyToBTSAddress(wifKeyToPrivateKey("5HvVz6XMx84aC5KaaBbwYrRLvWE46cH6zVnv4827SBPLorg76oq")),"BTSJQUAt4gz4civ8gSs5srTK4r82F7HvpChk")
         self.assertEqual(keyToBTSAddress(wifKeyToPrivateKey("5Jete5oFNjjk3aUMkKuxgAXsp7ZyhgJbYNiNjHLvq5xzXkiqw7R")),"BTSFPXXHXXGbyTBwdKoJaAPXRnhFNtTRS4EL")
         self.assertEqual(keyToBTSAddress(wifKeyToPrivateKey("5KDT58ksNsVKjYShG4Ls5ZtredybSxzmKec8juj7CojZj6LPRF7")),"BTS3qXyZnjJneeAddgNDYNYXbF7ARZrRv5dr")
+        # https://bitsharestalk.org/index.php?topic=12073.msg175333#msg175333
+        self.assertEqual(btcPubKeyToBTSAddress("0338900D92A42D9D89CB1FE73072E71D97DC7F44C8165E642C35E8AB47A588A896"),"BTS12LPYPSzyM3zPn9Wd2zAHfQBJ9hjDb9eF")
 
     def test_btcaddress(self):
         self.assertEqual(keyToBTCAddress(wifKeyToPrivateKey("5HqUkGuo62BfcJU5vNhTXKJRXuUi9QSE6jp8C3uBJ2BVHtB8WSd")),"141fYYgjgTfxWCzUhFwVrad54EWi8Yw29a")
