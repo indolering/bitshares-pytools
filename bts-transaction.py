@@ -8,30 +8,41 @@ import unittest
 import struct
 from binascii import hexlify
 from genbtskey import *
+import varint
 
 enc_memo_hex = "" # enc with otk_private
 tx1_balance_id = "BTS5bJNzfPVQxEahXp28H85hnL9GvdbiHdPf"
 
 def trx( privkey, topubkey, amount, asset_id, balance_id ) :
     fee               = .5 * 1e5
+    b = ""
 
     #####################
     # Withdraw condition for deposit ( equals 'output' )
     #owner                  = ripemd160(hashlib.sha512(topubkey).digest())
-    owner                  = btsbase58CheckDecode("XTS8QZgeFurRa6hzZVDtUDfvg7u7LAySeuNK")
-    memo_otk               = btsbase58CheckDecode("XTS54pK2P15bth1C4v9QLtMQDuV7vR8RQQttMBHMzScrJdG7GsBza")
+    owner                  = btsbase58CheckDecode("8QZgeFurRa6hzZVDtUDfvg7u7LAySeuNK")
+    memo_otk               = btsbase58CheckDecode("54pK2P15bth1C4v9QLtMQDuV7vR8RQQttMBHMzScrJdG7GsBza")
     memo_data              = ""
-    slate_id               = 0
-    type_id                = 1 # withdraw_signature_type
     values                 = ( owner, memo_otk, memo_data )
     withdraw_sig_condition = struct.pack('<20sss',*values)
     print ("withdraw_sig_condition: "+hexlify(withdraw_sig_condition))
-    values                 = ( asset_id, slate_id, type_id )
-    wc                     = struct.pack("<iqb",*values) + withdraw_sig_condition
-    print ("withdraw_condition: " + hexlify(wc))
+    print len(withdraw_sig_condition)
 
 
-    print("soll: 1600000000000000000137513dbafc2b1e175d91e3d7d71181b9742fdf90dc01021772ca67d26ed39f30580bb7e2ac5952bba74de08db7246b19c7ad0ae439280e00")
+
+    asset_id               = 22 # Varint32()
+    slate_id               = 0  # Int64()
+    type_id                = 1  # Uint8()  # withdraw_signature_type
+    wc  = "".join(varint.encode(asset_id))
+    wc += struct.pack("<Q",slate_id) 
+    wc += struct.pack("<B",type_id) 
+
+    b                    += wc
+    b                    += struct.pack("<B",0) 
+    b                    += struct.pack("<B",0) 
+    b                    += withdraw_sig_condition
+    print ("ist:  " + hexlify(b))
+    print ("soll: 1600000000000000000137513dbafc2b1e175d91e3d7d71181b9742fdf90dc01021772ca67d26ed39f30580bb7e2ac5952bba74de08db7246b19c7ad0ae439280e00")
 #     deposit                = struct.pack("<q", amount) + wc # Deposit operation ( this will be the complete 'output' )
 #     print ("deposit: " + hexlify(deposit))
 # 

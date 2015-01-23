@@ -1,4 +1,8 @@
 #!/usr/bin/python
+
+# Author:  Fabian Schuh <mail@xeroc.org>
+# Licence: MIT
+
 import requests
 import json
 
