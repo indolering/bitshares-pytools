@@ -3,25 +3,24 @@ from btsrpcapi import *
 import config
 from pprint import pprint
 
-accountname = "m.xeroc"
-amount = "ALL"  # BTSX
-txfee = 0.1 # BTSX
+accountname = "payouts.xeroc"
+amount = "ALL"  # BTS
+txfee = 0.1 # BTS
 
 if __name__ == "__main__":
  rpc = btsrpcapi(config.url, config.user, config.passwd)
- rpc.getstatus()
- rpc.walletopen(config.wallet)
- rpc.unlock(config.unlock)
+ rpc.info()
+ rpc.wallet_open(config.wallet)
+ rpc.unlock(999999,config.unlock)
 
  ## Get Balance
  if amount == "ALL" : 
   amount = rpc.getassetbalance( accountname, 0 ) / 1e5 - txfee
 
  ## Get Price
- #price = float(json.loads(rpc.marketstatus("USD","BTSX"))[ "result" ][ "avg_price_1h" ])
- orders = rpc.orderbook( "USD", "BTSX", 1e6)
+ orders = rpc.blockchain_market_order_book( "USD", "BTS", 100 )
  offers = []
- for os in json.loads( orders )[ "result" ] :
+ for os in orders[ "result" ] :
   for o in os :
    if o[ "type" ] == "bid_order" :
     price = float(o[ "market_index" ][ "order_price" ][ "ratio" ]) * 10
@@ -34,8 +33,9 @@ if __name__ == "__main__":
   mySum+=i[ 1 ]
   quant = min( [  i[ 1 ]  , amount ] )
   price = i[ 0 ]
-  print "wallet_market_submit_ask %s %f %s %f %s" %(accountname,  quant, "BTSX", price, "USD")
-  print rpc.marketask(accountname, quant, "BTSX", price, "USD")
+  print "wallet_market_submit_ask %s %f %s %f %s" %(accountname,  quant, "BTS", price, "USD")
+  #print rpc.wallet_market_submit_ask(accountname, quant, "BTS", price, "USD")
   amount = amount - quant - txfee
   if amount <= 0.0 :
    break
+ rpc.lock()

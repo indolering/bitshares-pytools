@@ -13,9 +13,9 @@ if __name__ == "__main__":
  feedprice = { }
  currenttime = datetime.utcnow()
  rpc = btsrpcapi(config.url, config.user, config.passwd)
- delegates = json.loads(rpc.listdelegates( 1,numDelegates ))
+ delegates = rpc.blockchain_list_delegates( 1, numDelegates )
  for top,delegate in enumerate(delegates["result"],1) :
-  feeds = (json.loads(rpc.getdelfeeds(delegate["name"]))["result"])
+  feeds = rpc.blockchain_get_feeds_from_delegate(delegate["name"])["result"]
   numfeeds = len(feeds)
   validfeed = []
   validfeeds = []

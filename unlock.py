@@ -4,5 +4,5 @@ import config
 
 if __name__ == "__main__":
  rpc = btsrpcapi(config.url, config.user, config.passwd)
- print rpc.walletopen(config.wallet)
+ print rpc.wallet_open(config.wallet)
  print rpc.unlock(config.unlock)

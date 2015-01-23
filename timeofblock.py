@@ -8,14 +8,9 @@ confirmationTime = timedelta( seconds=10 )
 
 if __name__ == "__main__":
      rpc = btsrpcapi(config.url, config.user, config.passwd)
-     status = json.loads(rpc.getstatus())
+     status = rpc.info()
      blockhead = status[ "result" ][ "blockchain_head_block_num" ]
-     block = json.loads(rpc.rpcexec({
-       "method": "blockchain_get_block",
-       "params": [blockhead],
-       "jsonrpc": "2.0",
-       "id": 0
-       }))
+     block = rpc.blockchain_get_block(blockhead)
      nowtime = datetime.strptime(block[ "result" ][ "timestamp" ],"%Y-%m-%dT%H:%M:%S")
      blockNum = int(sys.argv[ 1 ])
      print("block %d to appear in <= %s" % (blockNum,str(confirmationTime*(blockNum-blockhead))))

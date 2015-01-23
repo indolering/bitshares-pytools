@@ -60,16 +60,15 @@ payee = "payouts.xeroc"
 payrate = 3
 #########################################
 
-installed_version = "v0.4.21"
-
 if __name__ == "__main__":
  rpc = btsrpcapi(config.url, config.user, config.passwd)
- rpc.walletopen("delegate")
- rpc.unlock(config.unlock)
+ rpc.wallet_open("delegate")
+ rpc.unlock(999999,config.unlock)
  for d in delegates :
      #### Load existing tags
-     onchain = json.loads(rpc.getaccount(d))["result"]["public_data"]
+     onchain = rpc.blockchain_get_account(d)["result"]["public_data"]
      #### Merge tags
      newData = {key: value for (key, value) in (onchain.items() + publicData.items())}
      #### update on chain tags
-     print rpc.updatereg(d, payee, newData, payrate)
+     print rpc.wallet_account_update_registration(d, payee, newData, payrate)
+ rpc.lock()
