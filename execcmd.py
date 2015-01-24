@@ -13,4 +13,4 @@ if __name__ == "__main__":
        "params": list(data),
        "jsonrpc": "2.0",
        "id": 0
-       }))[ "result" ])
+       })))
