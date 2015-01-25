@@ -1,11 +1,11 @@
 #!/usr/bin/python
-from btsrpcapi import *
+import bitsharesrpc
 import config
 import sys
 from pprint import pprint 
 
 if __name__ == "__main__":
-     rpc = btsrpcapi(config.url, config.user, config.passwd)
+     rpc = bitsharesrpc.client(config.url, config.user, config.passwd)
      cmd = sys.argv[1] 
      data = sys.argv[2:] 
      pprint((rpc.rpcexec({

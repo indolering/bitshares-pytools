@@ -1,8 +1,8 @@
 #!/usr/bin/python
-from btsrpcapi import *
+import bitsharesrpc
 import config
 
 if __name__ == "__main__":
- rpc = btsrpcapi(config.url, config.user, config.passwd)
+ rpc = bitsharesrpc.client(config.url, config.user, config.passwd)
  print rpc.wallet_open("delegate")
  print rpc.lock()

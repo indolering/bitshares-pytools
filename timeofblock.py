@@ -1,13 +1,13 @@
 #!/usr/bin/python
 from datetime import datetime,timedelta
-from btsrpcapi import *
+import bitsharesrpc
 import config
 import sys
 
 confirmationTime = timedelta( seconds=10 )
 
 if __name__ == "__main__":
-     rpc = btsrpcapi(config.url, config.user, config.passwd)
+     rpc = bitsharesrpc.client(config.url, config.user, config.passwd)
      status = rpc.info()
      blockhead = status[ "result" ][ "blockchain_head_block_num" ]
      block = rpc.blockchain_get_block(blockhead)

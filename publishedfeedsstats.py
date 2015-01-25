@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from btsrpcapi import *
+import bitsharesrpc
 import config
 from pprint import pprint
 from datetime import datetime
@@ -12,7 +12,7 @@ if __name__ == "__main__":
  delegatefeeds = []
  feedprice = { }
  currenttime = datetime.utcnow()
- rpc = btsrpcapi(config.url, config.user, config.passwd)
+ rpc = bitsharesrpc.client(config.url, config.user, config.passwd)
  delegates = rpc.blockchain_list_delegates( 1, numDelegates )
  for top,delegate in enumerate(delegates["result"],1) :
   feeds = rpc.blockchain_get_feeds_from_delegate(delegate["name"])["result"]

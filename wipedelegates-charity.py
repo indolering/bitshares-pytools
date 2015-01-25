@@ -1,11 +1,11 @@
 #!/usr/bin/python
-from btsrpcapi import *
+import bitsharesrpc
 import config
 import re
 
 payouttarget = "payouts.charity"
 withdrawfee = 0.5 * 1e5;
-rpc = btsrpcapi(config.url, config.user, config.passwd)
+rpc = bitsharesrpc.client(config.url, config.user, config.passwd)
 
 if __name__ == "__main__":
  print rpc.info()

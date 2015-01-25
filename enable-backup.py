@@ -1,11 +1,11 @@
 #!/usr/bin/python
 import csv
 import os
-from btsrpcapi import *
+import bitsharesrpc
 import config
 
-rpc2  = btsrpcapi(config.backupurl, config.backupuser, config.backuppasswd)
-rpc  = btsrpcapi(config.mainurl, config.mainuser, config.mainpasswd)
+rpc2  = bitsharesrpc.client(config.backupurl, config.backupuser, config.backuppasswd)
+rpc  = bitsharesrpc.client(config.mainurl, config.mainuser, config.mainpasswd)
 
 def enable( ) :
     print "checking connectivity"

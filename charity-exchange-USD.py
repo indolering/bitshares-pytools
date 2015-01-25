@@ -1,12 +1,12 @@
 #!/usr/bin/python
-from btsrpcapi import *
+import bitsharesrpc
 import config
 
 accountname = "payouts.charity"
 percentage  = 0.90
 
 if __name__ == "__main__":
- rpc = btsrpcapi(config.url, config.user, config.passwd)
+ rpc = bitsharesrpc.client(config.url, config.user, config.passwd)
  #print rpc.info()
  print rpc.wallet_open(config.wallet)
  print rpc.unlock(100, config.unlock)

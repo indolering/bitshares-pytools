@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from btsrpcapi import *
+import bitsharesrpc
 import config
 from pprint import pprint
 
@@ -18,7 +18,7 @@ btsprecision = 1e5
 if __name__ == "__main__":
  assert sum(partition.values()) == 1.0, "Partition must sum up to 1.0 but is %f" %sum(partition.values())
 
- rpc = btsrpcapi(config.url, config.user, config.passwd)
+ rpc = bitsharesrpc.client(config.url, config.user, config.passwd)
  ret = rpc.wallet_open(config.wallet)
  assert ret != -1 or "error" in ret, "Error from client: %s" % ret
  ret = rpc.unlock(999999,config.unlock)

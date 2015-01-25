@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from btsrpcapi import *
+import bitsharesrpc
 import config
 
 #######################################
@@ -61,7 +61,7 @@ payrate = 3
 #########################################
 
 if __name__ == "__main__":
- rpc = btsrpcapi(config.url, config.user, config.passwd)
+ rpc = bitsharesrpc.client(config.url, config.user, config.passwd)
  rpc.wallet_open("delegate")
  rpc.unlock(999999,config.unlock)
  for d in delegates :
