@@ -5,10 +5,11 @@ import hashlib
 import os
 import sys
 import unittest
+from binascii import hexlify, unhexlify
 
 PREFIX = "BTS"
 
-##############################################
+## Base58 coding #############################
 # https://github.com/kylegibson/python-bitcoin-client/blob/master/base58.py
 __b58chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 __b58base = len(__b58chars)
@@ -46,8 +47,7 @@ def base58decode(v):
     result = chr(0)*nPad + result
     return result
 
-##############################################
-# https://en.bitcoin.it/wiki/Base58Check_encoding
+## Base58 CHECK coding #############################
 def base58CheckEncode(version, payload):
     s = chr(version) + payload
     checksum = hashlib.sha256(hashlib.sha256(s).digest()).digest()[:4]
@@ -60,7 +60,7 @@ def base58CheckDecode(s):
     checksum = hashlib.sha256(hashlib.sha256(dec).digest()).digest()[:4]
     assert(s[-4:] == checksum)
     return dec[1:]
-##############################################
+## Base58 CHECK coding (BTS) ######################
 def btsbase58CheckEncode(s):
     return base58encode(s + ripemd160(s)[:4])
 
@@ -70,6 +70,7 @@ def btsbase58CheckDecode(s):
     checksum = ripemd160(dec)[:4]
     assert(s[-4:] == checksum)
     return dec[1:]
+
 ##############################################
 def wifKeyToPrivateKey(s) :
     return base58CheckDecode(s).encode('hex')
@@ -81,6 +82,15 @@ def privateKeyToPublicKey(s):
     sk = ecdsa.SigningKey.from_string(s.decode('hex'), curve=ecdsa.SECP256k1)
     return ('\04' + sk.verifying_key.to_string()).encode('hex')
 
+def compressedpubkey(s):
+    secret = s.decode('hex')
+    order = ecdsa.SigningKey.from_string(secret, curve=ecdsa.SECP256k1).curve.generator.order()
+    p = ecdsa.SigningKey.from_string(secret, curve=ecdsa.SECP256k1).verifying_key.pubkey.point
+    x_str = ecdsa.util.number_to_string(p.x(), order)
+    y_str = ecdsa.util.number_to_string(p.y(), order)
+    return (chr(2 + (p.y() & 1)) + x_str).encode('hex')
+    # return chr(4) + x_str + y_str ## uncompressed
+
 def ripemd160(s):
     ripemd160 = hashlib.new('ripemd160')
     ripemd160.update(s)
@@ -91,13 +101,6 @@ def pubKeyToAddr(s):
 
 def keyToBTCAddress(s):
     return pubKeyToAddr(privateKeyToPublicKey(s))
-
-def compressedpubkey(s):
-    # https://github.com/lyndsysimon/cryptocoin/blob/master/cryptocoin/key.py 
-    point = ecdsa.SigningKey.from_string(s.decode('hex'), curve=ecdsa.SECP256k1).verifying_key.pubkey.point
-    x = hex(point.x())[2:].strip('L')
-    y = hex(point.y())[2:].strip('L')
-    return ''.join(( '02' if point.y() % 2 == 0 else '03', x))
 
 def keyToBTSPubKey(s):
     btspubkey  = compressedpubkey(s).decode('hex')
@@ -116,6 +119,7 @@ def btcPubkeytoBTSpubkey(btcpubkey) :
     return PREFIX + btsbase58CheckEncode(btcpubkey.decode('hex'))
 
 class Testcases(unittest.TestCase) :
+
     def test_btspubkey(self):
         self.assertEqual(keyToBTSPubKey(wifKeyToPrivateKey("5HqUkGuo62BfcJU5vNhTXKJRXuUi9QSE6jp8C3uBJ2BVHtB8WSd")),"BTS677ZZd62Ca7SoUJoT1CytBhj4aJewzzi8tQZxYNqpSSK69FTuF")
         self.assertEqual(keyToBTSPubKey(wifKeyToPrivateKey("5JWcdkhL3w4RkVPcZMdJsjos22yB5cSkPExerktvKnRNZR5gx1S")),"BTS5z5e3BawwMY6UmcBQxYpkKZ8QQm4wdtS4KMZiWAcWBUC3RJuLT")
