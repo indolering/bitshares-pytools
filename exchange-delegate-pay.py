@@ -14,6 +14,7 @@ partition    = {
 spread       = 0.02  # put ask 5% below feed
 txfee        = 0.1 # BTS
 btsprecision = 1e5
+withdrawlimit= 100
 
 if __name__ == "__main__":
  assert sum(partition.values()) == 1.0, "Partition must sum up to 1.0 but is %f" %sum(partition.values())
@@ -30,7 +31,7 @@ if __name__ == "__main__":
  print("-"*80)
  account = rpc.wallet_get_account(accountname)["result"]
  assert "delegate_info" in account, "Account %s not registered as delegate" % accountname
- if float(account["delegate_info"]["pay_balance"])<txfee :
+ if float(account["delegate_info"]["pay_balance"]) < withdrawlimit*btsprecision :
   print "Not enough pay to withdraw yet!"
  else :
   payout = float(account["delegate_info"]["pay_balance"]) - txfee*btsprecision
@@ -45,7 +46,7 @@ if __name__ == "__main__":
  print("-"*80)
  print("| Exchanging delegate pay")
  print("-"*80)
- amount = rpc.getassetbalance( exchangename, 0 ) / btsprecision - len(partition)*txfee*2  # 1: exchange , 2: transfer
+ amount = rpc.market.get_balance( exchangename, 0 ) - len(partition)*txfee*2
  for asset in partition : 
   percent = partition[asset]
   if asset == "BTS" : 
@@ -60,8 +61,8 @@ if __name__ == "__main__":
  assert ret != -1 or "error" in ret, "Error from client: %s" % ret
 
  ## wait
- rpc.wait_for_block()
- rpc.wait_for_block()
+ #rpc.wait_for_block()
+ #rpc.wait_for_block()
 
  # Transfer to payoutname ############################################
  print("-"*80)
@@ -70,11 +71,11 @@ if __name__ == "__main__":
  for asset in partition : 
   assetid = rpc.blockchain_get_asset(asset)["result"]["id"]
   precision = rpc.get_precision(assetid)
-  amount = rpc.getassetbalance( exchangename, assetid) / precision
+  amount = rpc.market.get_balance( exchangename, assetid)
   if asset == "BTS" : amount -= txfee # spare tx fee
   if amount < 0: continue
   # check for suff bts for tx fee
-  if rpc.getassetbalance( exchangename, 0 ) / btsprecision < txfee :
+  if rpc.market.get_balance( exchangename, 0 ) < txfee :
    print("Not enough BTS for tx fee")
    continue
   print "Sending %10.5f BTS from %s to %s" % (amount,exchangename,payoutname)
