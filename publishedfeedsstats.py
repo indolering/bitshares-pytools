@@ -47,13 +47,28 @@ if __name__ == "__main__":
   medianPrice[ a ] = statistics.median(feedprice[a])
  print(t.get_string(sortby="std", reversesort=False))
 
- ## General Statistics ##############################
+ ## Large deviation delegates ######################
  t2 = PrettyTable(["delegate","top","numFeeds", "asset"]) 
- t2.align                   = 'l'                                                                                                                                                                                                    
+ t2.align                   = 'l'
  t2.border                  = True
  for p in delegatefeeds : 
-  assetstr = "\n".join([ "%8s, %11.8f (med%+8.3f%%)" % (a["asset_symbol"], a[ "price" ], 100*(a[ "price" ]-medianPrice[ a[ "asset_symbol" ]])/medianPrice[ a[ "asset_symbol" ]]) for a in p[ "feeds" ] ])
-  t2.add_row([p["name"], p["top"], p["numValidFeeds"], assetstr ])
-
- #print(t2.get_string(sortby="numFeeds", reversesort=True))
+  assetstr = ""
+  for a in p[ "feeds" ] :
+   deviation_from_median = (a[ "price" ]-medianPrice[ a[ "asset_symbol" ]])/medianPrice[ a[ "asset_symbol" ]] * 100
+   if deviation_from_median > 1.5 :
+    assetstr += "%8s, %11.8f (med%+8.3f%%)\n" % (a["asset_symbol"], a[ "price" ], deviation_from_median)
+  if assetstr != "" :
+   t2.add_row([p["name"], p["top"], p["numValidFeeds"], assetstr ])
+ print("\n\n\nLarge deviation Feeds")
  print(t2.get_string(sortby="top", reversesort=False))
+
+ ## All Statistics #################################
+ t3 = PrettyTable(["delegate","top","numFeeds", "asset"]) 
+ t3.align                   = 'l'
+ t3.border                  = True
+ for p in delegatefeeds : 
+  deviation_from_median = (a[ "price" ]-medianPrice[ a[ "asset_symbol" ]])/medianPrice[ a[ "asset_symbol" ]] * 100
+  assetstr = "\n".join([ "%8s, %11.8f (med%+8.3f%%)" % (a["asset_symbol"], a[ "price" ], deviation_from_median) for a in p[ "feeds" ] ])
+  t3.add_row([p["name"], p["top"], p["numValidFeeds"], assetstr ])
+ print("\n\n\nAll deviation")
+ print(t3.get_string(sortby="top", reversesort=False))

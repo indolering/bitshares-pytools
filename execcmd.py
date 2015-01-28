@@ -7,10 +7,10 @@ from pprint import pprint
 if __name__ == "__main__":
      rpc = bitsharesrpc.client(config.url, config.user, config.passwd)
      cmd = sys.argv[1] 
-     data = sys.argv[2:] 
+     print list(sys.argv[2:])
      pprint((rpc.rpcexec({
        "method": cmd,
-       "params": list(data),
+       "params": list(sys.argv[2:]),
        "jsonrpc": "2.0",
        "id": 0
        })))
