@@ -69,7 +69,7 @@ def btsbase58CheckDecode(s):
     dec = s[:-4]
     checksum = ripemd160(dec)[:4]
     assert(s[-4:] == checksum)
-    return dec[1:]
+    return dec # return full string - no version prefix
 
 ##############################################
 def wifKeyToPrivateKey(s) :
@@ -166,7 +166,7 @@ class Testcases(unittest.TestCase) :
 
     def test_btsb58rev(self):
         self.assertEqual(btsbase58CheckDecode("6dumtt9swxCqwdPZBGXh9YmHoEjFFnNfwHaTqRbQTghGAY2gRz"),"02e649f63f8e8121345fd7f47d0d185a3ccaa843115cd2e9392dcd9b82263bc680".decode('hex'))
-        self.assertEqual(btsbase58CheckDecode("5ywapm5TuAfnj2FquQvwH8tXEGdzzpTvyNVyq298RB1XnFn6oK"),"03457298c4b2c56a8d572c051ca3109dabfe360beb144738180d6c964068ea3e58".decode('hex'))
+        self.assertEqual(btsbase58CheckDecode("5ywapm5TuAfnj2FquQvwH8tXEGdzzpTvyNVyq298RB1XnFn6oK"),"0290137a9c8189754dffb3c7641ad76faa61a0c8fe977c291e44be47d1d9082c9a".decode('hex'))
         self.assertEqual(btsbase58CheckDecode("5725vivYpuFWbeyTifZ5KevnHyqXCi5hwHbNU9cYz1FHbFXCxX"),"021c7359cd885c0e319924d97e3980206ad64387aff54908241125b3a88b55ca16".decode('hex'))
         self.assertEqual(btsbase58CheckDecode("6kZKHSuxqAwdCYsMvwTcipoTsNE2jmEUNBQufGYywpniBKXWZK"),"02f561e0b57a552df3fa1df2d87a906b7a9fc33a83d5d15fa68a644ecb0806b49a".decode('hex'))
         self.assertEqual(btsbase58CheckDecode("8b82mpnH8YX1E9RHnU2a2YgLTZ8ooevEGP9N15c1yFqhoBvJur"),"03e7595c3e6b58f907bee951dc29796f3757307e700ecf3d09307a0cc4a564eba3".decode('hex'))
