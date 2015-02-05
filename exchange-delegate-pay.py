@@ -70,15 +70,23 @@ if __name__ == "__main__":
  print("-"*80)
  for asset in partition : 
   assetid = rpc.blockchain_get_asset(asset)["result"]["id"]
-  precision = rpc.market.get_precision(assetid)
   amount = rpc.market.get_balance( exchangename, assetid)
-  if asset == "BTS" : amount -= txfee # spare tx fee
-  if amount < txfee: continue
-  # check for suff bts for tx fee
-  if rpc.market.get_balance( exchangename, 0 ) < txfee :
-   print("Not enough BTS for tx fee")
-   continue
+  if asset == "BTS" : continue
+  if amount > 0.0 :
+   print "Sending %10.5f %s from %s to %s" % (amount,asset,exchangename,payoutname)
+   ret = rpc.wallet_transfer(amount, asset, exchangename, payoutname, "auto payex")
+   assert "error" not in ret, "Error from client: %s" % ret
+
+ # Transfer to payoutname ############################################
+ print("-"*80)
+ print("| Sending BTS to payout account")
+ print("-"*80)
+ assetid   = rpc.blockchain_get_asset("BTS")["result"]["id"]
+ amount    = rpc.market.get_balance( exchangename, assetid) - 10*txfee  # keep 10x txfee as reserve
+ if amount > txfee :
   print "Sending %10.5f BTS from %s to %s" % (amount,exchangename,payoutname)
   ret = rpc.wallet_transfer(amount, asset, exchangename, payoutname, "auto payex")
   assert "error" not in ret, "Error from client: %s" % ret
+
+ # Lock wallet #######################################################
  rpc.lock()
