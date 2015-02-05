@@ -3,11 +3,11 @@ import bitsharesrpc
 import config
 from pprint import pprint
 
-accountname  = "delegate.xeroc"
-exchangename = "exchange.xeroc"
-payoutname   = "payouts.xeroc"
+accountnames  = ["delegate.charity", "a.delegate.charity", "b.delegate.charity", "c.delegate.charity", "d.delegate.charity",]
+exchangename = "exchange.charity"
+payoutname   = "payouts.charity"
 partition    = {
-                   "EUR" : .5,
+                   "USD" : .5,
                    "BTS" : .5,
                } ## BTS has to be last
 spread       = 0.00 # 0.0: put ask at price feed   0.05: 5% below pricefeed
@@ -28,18 +28,19 @@ if __name__ == "__main__":
  print("-"*80)
  print("| Withdrawing delegate pay")
  print("-"*80)
- account = rpc.wallet_get_account(accountname)["result"]
- assert "delegate_info" in account, "Account %s not registered as delegate" % accountname
- if float(account["delegate_info"]["pay_balance"]) < withdrawlimit*btsprecision :
-  print "Not enough pay to withdraw yet!"
- else :
-  payout = float(account["delegate_info"]["pay_balance"]) - txfee*btsprecision
-  print "Withdrawing %10.5f BTS from %s to %s" % (account["delegate_info"]["pay_balance"]/btsprecision,account["name"], exchangename)
-  ret = rpc.wallet_delegate_withdraw_pay(account["name"],exchangename,payout/btsprecision, "auto pay day") 
-  assert "error" not in ret, "Error from client: %s" % ret
-  ## wait
-  rpc.wait_for_block()
-  rpc.wait_for_block()
+ for accountname in accountnames :
+  account = rpc.wallet_get_account(accountname)["result"]
+  assert "delegate_info" in account, "Account %s not registered as delegate" % accountname
+  if float(account["delegate_info"]["pay_balance"]) < withdrawlimit*btsprecision :
+   print "Not enough pay to withdraw yet!"
+  else :
+   payout = float(account["delegate_info"]["pay_balance"]) - txfee*btsprecision
+   print "Withdrawing %10.5f BTS from %s to %s" % (account["delegate_info"]["pay_balance"]/btsprecision,account["name"], exchangename)
+   ret = rpc.wallet_delegate_withdraw_pay(account["name"],exchangename,payout/btsprecision, "auto pay day") 
+   assert "error" not in ret, "Error from client: %s" % ret
+ ## wait
+ rpc.wait_for_block()
+ rpc.wait_for_block()
 
  # Exchange ##########################################################
  print("-"*80)
