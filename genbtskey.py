@@ -31,7 +31,10 @@ def base58encode(v):
     return (__b58chars[0]*nPad) + result
 
 def base58decode(v):
-    long_value = 0L
+    if sys.version_info[0] < 3:
+        long_value = long( 0 ) 
+    else :
+        long_value = int( 0 ) 
     for (i, c) in enumerate(v[::-1]):
         long_value += __b58chars.find(c) * (__b58base**i)
     result = ''
@@ -190,13 +193,13 @@ if __name__ == '__main__':
             private_key =  wifKeyToPrivateKey(sys.argv[1])
 
     # Output
-    print "Secret Exponent         : %s " % private_key 
-    print "Private Key             : %s " % privateKeyToWif(private_key)
-    print "BTC Address             : %s " % keyToBTCAddress(private_key)
-    print "-"*80
-    print "BTC Pubkey (compressed) : %s " % compressedpubkey(private_key)
-    print "BTC Address             : %s " % keyToBTCAddress(private_key)
-    print "-"*80
-    print "BTS PubKey              : %s " % keyToBTSPubKey(private_key)
-    print "BTS Address             : %s " % keyToBTSAddress(private_key)
-    print "-"*80
+    print("Secret Exponent         : %s  ") % private_key 
+    print("Private Key             : %s  ") % privateKeyToWif(private_key)
+    print("BTC Address             : %s  ") % keyToBTCAddress(private_key)
+    print("-"*80)
+    print("BTC Pubkey (compressed) : %s " ) % compressedpubkey(private_key)
+    print("BTC Address             : %s " ) % keyToBTCAddress(private_key)
+    print("-"*80)                          
+    print("BTS PubKey              : %s " ) % keyToBTSPubKey(private_key)
+    print("BTS Address             : %s " ) % keyToBTSAddress(private_key)
+    print("-"*80)
