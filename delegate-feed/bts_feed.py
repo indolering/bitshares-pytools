@@ -11,6 +11,7 @@ import statistics
 import re
 from math import fabs
 import numpy as num
+import ../config
 
 ## ----------------------------------------------------------------------------
 ## When do we have to force publish?
@@ -348,15 +349,11 @@ def print_stats() :
 ## Run Script
 ## ----------------------------------------------------------------------------
 if __name__ == "__main__":
- ## Load Config ###############################################################
- config_data = open('config.json')
- config = json.load(config_data)
- config_data.close()
  ## rpc variables about bts rpc ###############################################
  headers = {'content-type': 'application/json',
             'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0'}
- auth    = (config["bts_rpc"]["username"], config["bts_rpc"]["password"])
- url     = config["bts_rpc"]["url"]
+ auth    = (config["user"], config["passwd"])
+ url     = config["url"]
  asset_list_all = ["BTC", "SILVER", "GOLD", "TRY", "SGD", "HKD", "RUB", "SEK", "NZD", "CNY", "MXN", "CAD", "CHF", "AUD", "GBP", "JPY", "EUR", "USD", "KRW"]
  delegate_list  = config["delegate_list"]
  ## Call Parameters ###########################################################
@@ -374,13 +371,13 @@ if __name__ == "__main__":
  volume_in_usd           = {}
  volume_in_btc           = {}
  volume_in_eur           = {}
- volume_in_bts          = {}
+ volume_in_bts           = {}
  price_in_cny            = {}
  price_in_usd            = {}
  price_in_btc            = {}
  price_in_eur            = {}
- price_in_bts           = {}
- price_in_bts_weighted  = {}
+ price_in_bts            = {}
+ price_in_bts_weighted   = {}
  volume                  = {}
  myCurrentFeed           = {}
  price_median_blockchain = {}
