@@ -1,0 +1,18 @@
+{
+  "bts_rpc": {
+    "url": "http://__HOST__:__PORT__/rpc",
+    "username": "user",
+    "password": "secret"
+  },
+  "asset_list_display": ["CNY", "USD", "BTC"],
+  "delegate_list": [ "delegate.xeroc", "a.delegate.xeroc", "b.delegate.xeroc", "delegate.charity", "a.delegate.charity", "c.delegate.charity"],
+  "payaccount" : "delegate.xeroc",
+  "maxAgeFeedInSeconds" : 1200,
+  "minValidAssetPrice" : 0.00001,
+  "discount" : 0.995,
+  "change_min" : 0.5,
+  "btc38_trust_level" : 1.0,
+  "bter_trust_level" : 1.0,
+  "poloniex_trust_level" : 0.5,
+  "bittrex_trust_level" : 0.5
+}
