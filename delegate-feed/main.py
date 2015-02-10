@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf8 sw=1 expandtab ft=python
 
+import bitsharesrpc
 import requests
 import json
 import sys
@@ -11,7 +12,9 @@ import statistics
 import re
 from math import fabs
 import numpy as num
-import ../config
+import sys
+sys.path.append('..')
+import config
 
 ## ----------------------------------------------------------------------------
 ## When do we have to force publish?
@@ -37,7 +40,7 @@ def publish_rule():
   ## Define REAL_PRICE
   realPrice[asset] = statistics.median( price_in_bts[asset] )
   ## Rules 
-  if (datetime.utcnow()-oldtime[asset]).total_seconds() > config["maxAgeFeedInSeconds"] :
+  if (datetime.utcnow()-oldtime[asset]).total_seconds() > config.maxAgeFeedInSeconds :
         print("Feeds for %s too old! Force updating!" % asset)
         return True
   elif realPrice[asset]     < price_median_blockchain[asset] and \
@@ -45,10 +48,10 @@ def publish_rule():
         print("External price move for %s: realPrice(%f) < feedmedian(%f) and newprice(%f) > feedmedian(%f) Force updating!"\
                % (asset,realPrice[asset],price_median_blockchain[asset],realPrice[asset],price_median_blockchain[asset]))
         return True
-  elif fabs(myCurrentFeed[asset]-realPrice[asset])/realPrice[asset] > config["change_min"] and\
-       (datetime.utcnow()-oldtime[asset]).total_seconds() > config["maxAgeFeedInSeconds"] > 20*60:
+  elif fabs(myCurrentFeed[asset]-realPrice[asset])/realPrice[asset] > config.change_min and\
+       (datetime.utcnow()-oldtime[asset]).total_seconds() > config.maxAgeFeedInSeconds > 20*60:
         print("New Feeds differs too much for %s %.2f > %.2f! Force updating!" \
-               % (asset,fabs(myCurrentFeed[asset]-realPrice[asset]), config["change_min"]))
+               % (asset,fabs(myCurrentFeed[asset]-realPrice[asset]), config.change_min))
         return True
  ## default: False
  return False
@@ -65,14 +68,14 @@ def fetch_from_btc38():
    result = response.json()
   except: 
    print("Error fetching results from btc38!")
-   if config["btc38_trust_level"] > 0.8:
+   if config.btc38_trust_level > 0.8:
     sys.exit("Exiting due to exchange importance!")
    return
 
   for coin in availableAssets :
-   if "ticker" in result[coin.lower()] and result[coin.lower()]["ticker"] and float(result[coin.lower()]["ticker"]["last"])>config["minValidAssetPrice"]:
+   if "ticker" in result[coin.lower()] and result[coin.lower()]["ticker"] and float(result[coin.lower()]["ticker"]["last"])>config.minValidAssetPrice:
     price_in_btc[ coin ].append(float(result[coin.lower()]["ticker"]["last"]))
-    volume_in_btc[ coin ].append(float(result[coin.lower()]["ticker"]["vol"]*result[coin.lower()]["ticker"]["last"])*config["btc38_trust_level"])
+    volume_in_btc[ coin ].append(float(result[coin.lower()]["ticker"]["vol"]*result[coin.lower()]["ticker"]["last"])*config.btc38_trust_level)
 
   availableAssets = [ "BTS", "BTC" ]
   try :
@@ -81,14 +84,14 @@ def fetch_from_btc38():
    result = response.json()
   except: 
    print("Error fetching results from btc38!")
-   if config["btc38_trust_level"] > 0.8:
+   if config.btc38_trust_level > 0.8:
     sys.exit("Exiting due to exchange importance!")
    return
 
   for coin in availableAssets :
-   if "ticker" in result[coin.lower()] and result[coin.lower()]["ticker"]  and float(result[coin.lower()]["ticker"]["last"])>config["minValidAssetPrice"]:
+   if "ticker" in result[coin.lower()] and result[coin.lower()]["ticker"]  and float(result[coin.lower()]["ticker"]["last"])>config.minValidAssetPrice:
     price_in_cny[ coin ].append(float(result[coin.lower()]["ticker"]["last"]))
-    volume_in_cny[ coin ].append(float(result[coin.lower()]["ticker"]["vol"])*float(result[coin.lower()]["ticker"]["last"])*config["btc38_trust_level"])
+    volume_in_cny[ coin ].append(float(result[coin.lower()]["ticker"]["vol"])*float(result[coin.lower()]["ticker"]["last"])*config.btc38_trust_level)
 
 def fetch_from_bter():
   try :
@@ -98,33 +101,33 @@ def fetch_from_bter():
 
   except:
    print("Error fetching results from bter!")
-   if config["bter_trust_level"] > 0.8:
+   if config.bter_trust_level > 0.8:
     sys.exit("Exiting due to exchange importance")
    return
 
   availableAssets = [ "BTS" ]
   for coin in availableAssets :
-   if float(result[coin.lower()+"_btc"]["last"]) < config["minValidAssetPrice"]:
+   if float(result[coin.lower()+"_btc"]["last"]) < config.minValidAssetPrice:
     print("Unreliable results from bter for %s"%(coin))
     continue
    price_in_btc[ coin ].append(float(result[coin.lower()+"_btc"]["last"]))
-   volume_in_btc[ coin ].append(float(result[coin.lower()+"_btc"]["vol_btc"])*config["bter_trust_level"])
+   volume_in_btc[ coin ].append(float(result[coin.lower()+"_btc"]["vol_btc"])*config.bter_trust_level)
 
   availableAssets = [ "BTC", "BTS" ]
   for coin in availableAssets :
-   if float(result[coin.lower()+"_usd"]["last"]) < config["minValidAssetPrice"]:
+   if float(result[coin.lower()+"_usd"]["last"]) < config.minValidAssetPrice:
     print("Unreliable results from bter for %s"%(coin))
     continue
    price_in_usd[ coin ].append(float(result[coin.lower()+"_usd"]["last"]))
-   volume_in_usd[ coin ].append(float(result[coin.lower()+"_usd"]["vol_usd"])*config["bter_trust_level"])
+   volume_in_usd[ coin ].append(float(result[coin.lower()+"_usd"]["vol_usd"])*config.bter_trust_level)
 
   availableAssets = [ "BTS", "BTC" ]
   for coin in availableAssets :
-   if float(result[coin.lower()+"_cny"]["last"]) < config["minValidAssetPrice"]:
+   if float(result[coin.lower()+"_cny"]["last"]) < config.minValidAssetPrice:
     print("Unreliable results from bter for %s"%(coin))
     continue
    price_in_cny[ coin ].append(float(result[coin.lower()+"_cny"]["last"]))
-   volume_in_cny[ coin ].append(float(result[coin.lower()+"_cny"]["vol_cny"])*config["bter_trust_level"])
+   volume_in_cny[ coin ].append(float(result[coin.lower()+"_cny"]["vol_cny"])*config.bter_trust_level)
 
 def fetch_from_poloniex():
   try:
@@ -134,13 +137,13 @@ def fetch_from_poloniex():
    availableAssets = [ "BTS" ]
   except:
    print("Error fetching results from poloniex!")
-   if config["poloniex_trust_level"] > 0.8:
+   if config.poloniex_trust_level > 0.8:
     sys.exit("Exiting due to exchange importance!")
    return
   for coin in availableAssets :
-   if float(result["BTC_"+coin.upper()]["last"])>config["minValidAssetPrice"]:
+   if float(result["BTC_"+coin.upper()]["last"])>config.minValidAssetPrice:
     price_in_btc[ coin ].append(float(result["BTC_"+coin.upper()]["last"]))
-    volume_in_btc[ coin ].append(float(result["BTC_"+coin.upper()]["baseVolume"])*config["poloniex_trust_level"])
+    volume_in_btc[ coin ].append(float(result["BTC_"+coin.upper()]["baseVolume"])*config.poloniex_trust_level)
 
 def fetch_from_bittrex():
   availableAssets = [ "BTSX" ]
@@ -150,7 +153,7 @@ def fetch_from_bittrex():
    result = response.json()["result"]
   except:
    print("Error fetching results from bittrex!")
-   if config["bittrex_trust_level"] > 0.8:
+   if config.bittrex_trust_level > 0.8:
     sys.exit("Exiting due to exchange importance!")
    return
   for coin in result :
@@ -160,9 +163,9 @@ def fetch_from_bittrex():
     coinmap=altcoin
     if altcoin=="BTSX" : 
      coinmap="BTS"
-    if float(coin["Last"]) > config["minValidAssetPrice"]:
+    if float(coin["Last"]) > config.minValidAssetPrice:
      price_in_btc[ coinmap ].append(float(coin["Last"]))
-     volume_in_btc[ coinmap ].append(float(coin["Volume"])*float(coin["Last"])*config["bittrex_trust_level"])
+     volume_in_btc[ coinmap ].append(float(coin["Volume"])*float(coin["Last"])*config.bittrex_trust_level)
 
 def fetch_from_yahoo():
   try :
@@ -208,47 +211,23 @@ def bitassetname(asset) :
 ## ----------------------------------------------------------------------------
 ## Fetch current feeds, assets and feeds of assets from wallet
 ## ----------------------------------------------------------------------------
-def fetch_from_wallet():
- headers = {'content-type': 'application/json'}
+def fetch_from_wallet(rpc):
  ## Try to connect to delegate
- request = { "method": "info", "params": [], "jsonrpc": "2.0", "id": 1 }
- try:
-  response = requests.post(url, data=json.dumps(request), headers=headers, auth=auth)
-  result = response.json()
- except:
-  print("Cannot connect to delegate!!")
-  sys.exit()
+ rpc.info()
  ## asset definition - mainly for precision
  for asset in asset_list_publish :
-  headers = {'content-type': 'application/json'}
-  request = {
-    "method": "blockchain_get_asset",
-    "params": [asset],
-    "jsonrpc": "2.0", "id": 1 }
-  response = requests.post(url, data=json.dumps(request), headers=headers, auth=auth)
-  result = response.json()
+  result = rpc.blockchain_get_asset(asset)
   assetprecision[asset] = float(result["result"]["precision"])
   ## feeds for asset
-  request = {
-    "method": "blockchain_get_feeds_for_asset",
-    "params": [asset],
-    "jsonrpc": "2.0", "id": 1 }
-  response = requests.post(url, data=json.dumps(request), headers=headers, auth=auth)
-  result = response.json()
+  result = rpc.blockchain_get_feeds_for_asset(asset)
   price_median_blockchain[asset] = 0.0
   for feed in result["result"] :
    if feed["delegate_name"] == "MARKET":
     price_median_blockchain[asset] = float(feed["median_price"])
   time.sleep(.5) # Give time for the wallet to do more important tasks!
-
  ## feed from delegates
  for delegate in delegate_list:
-  request = {
-    "method": "blockchain_get_feeds_from_delegate",
-    "params": [delegate],
-    "jsonrpc": "2.0", "id": 1 }
-  response = requests.post(url, data=json.dumps(request), headers=headers, auth=auth)
-  result = response.json()
+  result = rpc.blockchain_get_feeds_from_delegate(delegate)
   for f in result[ "result" ] :
    myCurrentFeed[ f[ "asset_symbol" ] ] = f[ "price" ]
    oldtime[ f[ "asset_symbol" ] ] = datetime.strptime(f["last_update"],"%Y-%m-%dT%H:%M:%S")
@@ -257,34 +236,20 @@ def fetch_from_wallet():
 ## ----------------------------------------------------------------------------
 ## Send the new feeds!
 ## ----------------------------------------------------------------------------
-def update_feed(assets,payee):
- headers = {'content-type': 'application/json'}
+def update_feed(rpc,assets,payee):
  ## Try to connect to delegate
- request = { "method": "info", "params": [], "jsonrpc": "2.0", "id": 1 }
- try:
-  response = requests.post(url, data=json.dumps(request), headers=headers, auth=auth)
-  result = response.json()
- except:
-  print("Cannot connect to delegate!!")
-  sys.exit()
-
+ rpc.info()
+ ## unlock wallet
+ print( "Opening wallet %s" % config.wallet )
+ ret = rpc.wallet_open(config.wallet)
+ print( "Unlocking wallet" )
+ ret = rpc.unlock(999999, config.unlock)
  # for each delegate update the list
  for delegate in delegate_list:
-  request = {
-   "method": "wallet_publish_feeds",
-   "params": [delegate, assets, payee],
-   "jsonrpc": "2.0",
-   "id": 1
-  }
-  try:
-   response = requests.post(url, data=json.dumps(request), headers=headers, auth=auth)
-   result = response.json()
-   print("Updating ", delegate)
-   if "error" in result :
-    print(result["error"])
-  except:
-   print("Cannot connect to delegate!!")
-   sys.exit()
+  print("publishing feeds for delegate: %s"%delegate)
+  result = rpc.wallet_publish_feeds(delegate, assets, payee)
+ ## close wallet
+ rpc.lock()
 
 ## ----------------------------------------------------------------------------
 ## calculate feed prices in BTS for all assets given the exchange prices in USD,CNY,BTC
@@ -329,7 +294,7 @@ def get_btsprice():
   price_in_bts_weighted[asset] = num.average(assetprice, weights=volume)
 
   ### Discount
-  price_in_bts_weighted[asset] = price_in_bts_weighted[asset] * config["discount"]
+  price_in_bts_weighted[asset] = price_in_bts_weighted[asset] * config.discount
 
 
 def print_stats() :
@@ -349,13 +314,13 @@ def print_stats() :
 ## Run Script
 ## ----------------------------------------------------------------------------
 if __name__ == "__main__":
- ## rpc variables about bts rpc ###############################################
+ ## API header ################################################################
  headers = {'content-type': 'application/json',
             'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0'}
- auth    = (config["user"], config["passwd"])
- url     = config["url"]
+ ## rpc variables about bts rpc ###############################################
+ rpc = bitsharesrpc.client(config.url, config.user, config.passwd)
  asset_list_all = ["BTC", "SILVER", "GOLD", "TRY", "SGD", "HKD", "RUB", "SEK", "NZD", "CNY", "MXN", "CAD", "CHF", "AUD", "GBP", "JPY", "EUR", "USD", "KRW"]
- delegate_list  = config["delegate_list"]
+ delegate_list  = config.delegate_list
  ## Call Parameters ###########################################################
  if len( sys.argv ) < 2 :
   sys.exit( "Usage: bts_feed.py <space separated list of currencies>" )
@@ -405,7 +370,7 @@ if __name__ == "__main__":
 
  ## Get prices and stats ######################################################
  print("Loading data: ", end="",flush=True)
- fetch_from_wallet()
+ fetch_from_wallet(rpc)
  print("yahoo", end="",flush=True)
  fetch_from_yahoo()
  print(", BTC38", end="",flush=True)
@@ -434,6 +399,6 @@ if __name__ == "__main__":
  ## Check publish rules and publich feeds #####################################
  if publish_rule() :
   print("Update required! Forcing now!")
-  update_feed(asset_list_final, config["payaccount"])
+  update_feed(rpc,asset_list_final, config.payaccount)
  else :
   print("no update required")

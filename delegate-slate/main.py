@@ -1,43 +1,37 @@
 #!/usr/bin/python
-from btsrpcapi import *
+import bitsharesrpc
+import sys
+sys.path.append('..')
 import config
 
 if __name__ == "__main__":
- ## open up connection to client
  print( "Opening connection to client" )
- rpc = btsrpcapi(config.url, config.user, config.passwd)
+ rpc = bitsharesrpc.client(config.url, config.user, config.passwd)
 
- ## open wallet
  print( "Opening wallet %s" % config.wallet )
- ret = rpc.walletopen(config.wallet)
- if ret == -1 : raise Exception( "Failed to open wallet! Connection settings ok?" )
+ ret = rpc.wallet_open(config.wallet)
 
- ## unlock wallet
  print( "Unlocking wallet" )
- ret = rpc.unlock(config.unlock)
- if ret == -1 : raise Exception( "Failed to unlock wallet! Wallet and connection settings ok?" )
- if "error" in ret : raise Exception( "Error unlock wallet! Check passphrase" )
+ ret = rpc.unlock(999999, config.unlock)
 
  # get all accounts known to the client
- accounts = rpc.walletallgetaccounts()["result"]
+ accounts = rpc.wallet_list_accounts()["result"]
 
- ## unapprove ALL accounts
  print( "Unapproving all previously approve delegates" )
  for account in accounts :
-  rpc.unapprovedelegate(account["name"])
+  rpc.wallet_approve_delegate(account["name"], "0")
 
- ## approve trusted accounts
  print( "Approving trusted delegates" )
  for d in config.trusted :
   print( " - %s" % d )
-  rpc.approvedelegate(d)
+  rpc.wallet_approve_delegate(d)
 
  ## publish slate
- ret = rpc.publishslate(config.delegate, config.payee)
- if ret == -1 : raise Exception( "Failed to unlock wallet! Wallet and connection settings ok?" )
- if "error" in ret : raise Exception( "Unable to publish slate?! WTF? Got:\n %s" % ret )
+ ret = rpc.wallet_publish_slate(config.slatedelegate, config.slatepayee)
 
  ## dump publish transaction as a whole
  print("Broadcasting slate")
  print("Transactions ID: %s" % ret["result"]["record_id"])
- #print(json.dumps(ret,indent=4))
+
+ ## close wallet
+ rpc.lock()
