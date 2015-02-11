@@ -13,7 +13,6 @@ import re
 from math import fabs
 import numpy as num
 import sys
-sys.path.append('..')
 import config
 
 ## ----------------------------------------------------------------------------
@@ -236,7 +235,7 @@ def fetch_from_wallet(rpc):
 ## ----------------------------------------------------------------------------
 ## Send the new feeds!
 ## ----------------------------------------------------------------------------
-def update_feed(rpc,assets,payee):
+def update_feed(rpc,assets):
  ## Try to connect to delegate
  rpc.info()
  ## unlock wallet
@@ -247,7 +246,7 @@ def update_feed(rpc,assets,payee):
  # for each delegate update the list
  for delegate in delegate_list:
   print("publishing feeds for delegate: %s"%delegate)
-  result = rpc.wallet_publish_feeds(delegate, assets, payee)
+  result = rpc.wallet_publish_feeds(delegate, assets)
  ## close wallet
  rpc.lock()
 
@@ -399,6 +398,6 @@ if __name__ == "__main__":
  ## Check publish rules and publich feeds #####################################
  if publish_rule() :
   print("Update required! Forcing now!")
-  update_feed(rpc,asset_list_final, config.payaccount)
+  update_feed(rpc,asset_list_final)
  else :
   print("no update required")
