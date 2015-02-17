@@ -111,7 +111,10 @@ def keyToBTSPubKey(s):
 
 def keyToBTSAddress(s) :
     btspubkey  = compressedpubkey(s).decode('hex')
-    myaddress  = ripemd160(hashlib.sha512(btspubkey).digest())
+    return btsPubKeyToBTSAddress(btspubkey.encode('hex'))
+
+def btsPubKeyToBTSAddress(btspubkey) :
+    myaddress  = ripemd160(hashlib.sha512(btspubkey.decode('hex')).digest())
     return PREFIX + btsbase58CheckEncode(myaddress)
 
 def btcPubKeyToBTSAddress(btspubkey) :
