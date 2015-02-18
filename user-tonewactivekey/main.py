@@ -1,9 +1,6 @@
 #!/usr/bin/python
 import bitsharesrpc
 import config
-import genbtskey
-import os
-from pprint import pprint
 
 txfee = 0.1
 
