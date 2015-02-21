@@ -2,7 +2,7 @@
 
     git clone https://github.com/xeroc/python-bitsharesrpc
     cd python-bitsharesrpc
-    python setup install    # (optionally with parameter --user fo non-root installations)
+    python setup.py install    # (optionally with parameter --user fo non-root installations)
 
 **Configuration**
 
